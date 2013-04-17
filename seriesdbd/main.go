@@ -18,6 +18,8 @@ var (
 	dataPoints  = flag.Int("data-points", 60*24, "number of datapoints to keep")
 )
 
+var seriesdb *SeriesDB
+
 func main() {
 	flag.Parse()
 
@@ -42,15 +44,15 @@ func main() {
 
 	log.Printf("seriesdb v%s", util.BINARY_VERSION)
 
-	dbd := NewSeriesDB(&SeriesDBOptions{
+	seriesdb = NewSeriesDB(&SeriesDBOptions{
 		granularity: *granularity,
 		dataPoints:  *dataPoints,
 	})
-	dbd.httpAddress = httpAddr
-	dbd.exitChannel = exitChannel
+	seriesdb.httpAddress = httpAddr
+	seriesdb.exitChannel = exitChannel
 
-	dbd.Start()
+	seriesdb.Start()
 	// Wait till we get data in the exit channel
 	<-exitChannel
-	dbd.Stop()
+	seriesdb.Stop()
 }
