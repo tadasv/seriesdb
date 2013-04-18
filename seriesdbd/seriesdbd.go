@@ -1,9 +1,9 @@
 package main
 
 import (
+	"github.com/tadasv/seriesdb/series"
 	"log"
 	"net"
-	"github.com/tadasv/seriesdb/series"
 )
 
 type SeriesDB struct {

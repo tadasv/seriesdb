@@ -17,6 +17,7 @@ func httpServer(listener net.Listener) {
 	handler := http.NewServeMux()
 	handler.HandleFunc("/alive", aliveHandler)
 	handler.HandleFunc("/datapoint", dataPointHandler)
+	handler.HandleFunc("/stats", statsHandler)
 
 	server := &http.Server{
 		Handler: handler,
@@ -31,6 +32,16 @@ func httpServer(listener net.Listener) {
 
 func aliveHandler(w http.ResponseWriter, req *http.Request) {
 	util.ApiResponse(w, 200, "OK", nil)
+}
+
+func statsHandler(w http.ResponseWriter, req *http.Request) {
+	data := make(map[string]interface{})
+
+	dataPointStats := make(map[string]interface{})
+	dataPointStats["count"] = seriesdb.dataPointSeq.Size()
+
+	data["datapoints"] = dataPointStats
+	util.ApiResponse(w, 200, "OK", data)
 }
 
 func dataPointHandler(w http.ResponseWriter, req *http.Request) {
