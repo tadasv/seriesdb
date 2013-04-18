@@ -46,6 +46,10 @@ func (point *DataPoint) GetDimension(name string) (*string, error) {
 	return &value, nil
 }
 
+func (point *DataPoint) NumDimensions() int {
+	return len(point.dimensions)
+}
+
 func (point *DataPoint) SetMetric(name string, value float64) {
 	point.metrics[name] = value
 }
@@ -57,4 +61,8 @@ func (point *DataPoint) GetMetric(name string) (float64, error) {
 	}
 
 	return value, nil
+}
+
+func (point *DataPoint) NumMetrics() int {
+	return len(point.metrics)
 }

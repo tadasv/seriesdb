@@ -5,6 +5,18 @@ import (
 	"time"
 )
 
+func Test_Constructor(t *testing.T) {
+	point := NewDataPoint()
+
+	if point.NumMetrics() != 0 {
+		t.Fatal("expected 0 metrics")
+	}
+
+	if point.NumDimensions() != 0 {
+		t.Fatal("expected 0 dimensions")
+	}
+}
+
 func Test_SetTimestamp(t *testing.T) {
 	point := NewDataPoint()
 	ts := time.Now()
@@ -31,6 +43,10 @@ func Test_Dimensions(t *testing.T) {
 	if *value != "A" {
 		t.Error("got invalid value %@ expected A", value)
 	}
+
+	if point.NumDimensions() != 1 {
+		t.Fatal("expected 1 dimension")
+	}
 }
 
 func Test_Metrics(t *testing.T) {
@@ -51,10 +67,18 @@ func Test_Metrics(t *testing.T) {
 		t.Error("got invalid value %@ expected 1.1", value)
 	}
 
+	if point.NumMetrics() != 1 {
+		t.Fatal("expected 1 dimension")
+	}
+
 	point.SetMetric("m1", 10.4)
 	value, err = point.GetMetric("m1")
 	if err != nil {
 		t.Fatal("did not expect error")
+	}
+
+	if point.NumMetrics() != 1 {
+		t.Fatal("expected 1 dimension")
 	}
 
 	if value != 10.4 {

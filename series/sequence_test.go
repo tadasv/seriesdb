@@ -7,7 +7,7 @@ import (
 func Test_AddDataPoint(t *testing.T) {
 	seq := NewDataPointSequence(1, 10)
 
-	for i := 0 ; i < 20; i++ {
+	for i := 0; i < 20; i++ {
 		point := NewDataPoint()
 		seq.AddDataPoint(&point)
 	}
