@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net"
+	"github.com/tadasv/seriesdb/series"
 )
 
 type SeriesDB struct {
@@ -10,6 +11,7 @@ type SeriesDB struct {
 	httpAddress  *net.TCPAddr
 	httpListener net.Listener
 	exitChannel  chan int
+	dataPointSeq series.DataPointSequence
 }
 
 type SeriesDBOptions struct {
@@ -21,6 +23,8 @@ func NewSeriesDB(options *SeriesDBOptions) *SeriesDB {
 	dbd := &SeriesDB{
 		options: options,
 	}
+
+	dbd.dataPointSeq = series.NewDataPointSequence(options.granularity, options.dataPoints)
 
 	return dbd
 }
