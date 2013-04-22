@@ -2,6 +2,8 @@ package util
 
 import (
 	"encoding/json"
+	simplejson "github.com/bitly/go-simplejson"
+	"io/ioutil"
 	"net/http"
 	"strconv"
 )
@@ -40,4 +42,32 @@ func ErrorResponse(w http.ResponseWriter, statusCode int, errorCode int, errorMe
 	w.Header().Set("Content-Length", strconv.Itoa(len(response)))
 	w.WriteHeader(statusCode)
 	w.Write(response)
+}
+
+func ExtractData(req *http.Request, w http.ResponseWriter) *simplejson.Json {
+	contentType, ok := req.Header["Content-Type"]
+	if ok == false || contentType[0] != "application/json" {
+		ErrorResponse(w, 400, 400, "Content-Type must be application/json", nil)
+		return nil
+	}
+
+	body, err := ioutil.ReadAll(req.Body)
+	if err != nil {
+		ErrorResponse(w, 500, 500, "failed to read body", nil)
+		return nil
+	}
+
+	json, err := simplejson.NewJson(body)
+	if err != nil {
+		ErrorResponse(w, 400, 400, "invalid json", nil)
+		return nil
+	}
+
+	json, ok = json.CheckGet("data")
+	if !ok {
+		ErrorResponse(w, 400, 400, "invalid json", nil)
+		return nil
+	}
+
+	return json
 }

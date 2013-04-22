@@ -1,10 +1,8 @@
 package main
 
 import (
-	simplejson "github.com/bitly/go-simplejson"
 	"github.com/tadasv/seriesdb/series"
 	"github.com/tadasv/seriesdb/util"
-	"io/ioutil"
 	"log"
 	"net"
 	"net/http"
@@ -50,29 +48,14 @@ func dataPointHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	contentType, ok := req.Header["Content-Type"]
-	if ok == false || contentType[0] != "application/json" {
-		util.ErrorResponse(w, 400, 400, "Content-Type must be application/json", nil)
-		return
-	}
-
-	body, err := ioutil.ReadAll(req.Body)
-	if err != nil {
-		util.ErrorResponse(w, 500, 500, "failed to read body", nil)
+	json := util.ExtractData(req, w)
+	if json == nil {
 		return
 	}
 
 	var datapoints []interface{}
-
-	json, err := simplejson.NewJson(body)
-	if err != nil {
-		goto error_invalid_json
-	}
-
-	json, ok = json.CheckGet("data")
-	if !ok {
-		goto error_invalid_json
-	}
+	var ok bool
+	var err error
 
 	json, ok = json.CheckGet("datapoints")
 	if !ok {
